@@ -9,7 +9,7 @@
  $printer_serial->test();
  
 #usb printer
- $printer_usb = Printer::Thermal->new(usb_device_path => '/dev/ttyS0');
+ $printer_usb = Printer::Thermal->new(usb_device_path => '/dev/usb/lp0');
 
  $printer_usb->test();
 

@@ -5,6 +5,7 @@ use Moose;
 use POSIX;
 
 use Device::SerialPort;
+use IO::File;
 use IO::Socket;
 use Parse::BBCode;
 
@@ -29,9 +30,18 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
   $printer->bold_off();
   $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
   
-  #For local printer, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers.
+  #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/ttyACM0';
-  $printer2 = Printer::Thermal->new(device_path=$path);
+  $printer2 = Printer::Thermal->new(serial_device_path=$path);
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print();
+
+  #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
+  my $path = '/dev/usb/lp0';
+  $printer2 = Printer::Thermal->new(usb_device_path=$path);
   $printer->write("Blah Blah \nReceipt Details\nFooter");
   $printer->bold_on();
   $printer->write("Bold Text");
@@ -49,13 +59,24 @@ For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/librar
 
 =head1 METHODS 
 
-=head3 $printer->device_path
+=head3 $printer->usb_device_path
 
-This variable contains the path for the printer device file on UNIX-like systems. I haven't added support for Windows and it probably wont work doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This maybe passed in the constructor
+This variable contains the path for the printer device file when connected as a usb device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
 
 =cut
 
-has device_path => (
+has usb_device_path => (
+  is => 'ro',
+  isa => 'Str',
+);
+
+=head3 $printer->serial_device_path
+
+This variable contains the path for the printer device file when connected as a serial device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
+
+=cut
+
+has serial_device_path => (
   is => 'ro',
   isa => 'Str',
 );
@@ -91,7 +112,7 @@ When used as a local serial device you can set the baudrate of the printer too. 
 has baudrate => (
   is => 'ro',
   isa => 'Int',
-  default => 19200,
+  default => 38400,
 );
 
 has read_char_time => (
@@ -138,7 +159,7 @@ has heatingDots => (
 
 has printer => (
   is         => 'ro',
-  isa     => 'IO::Handle',
+  #isa     => 'IO::Handle',
   lazy_build => 1,
 );
 
@@ -154,9 +175,11 @@ my $_GS  = chr(29);
 sub _build_printer {
   my ($self) = @_;
   my $printer;
-  if( $self->device_path ) {
-    $printer = Device::SerialPort->new( $self->device_path );
+  if( $self->serial_device_path ) {
+    $printer = Device::SerialPort->new( $self->serial_device_path );
     $printer->baudrate( $self->baudrate );
+  } elsif( $self->usb_device_path ) {
+    $printer = new IO::File ">>" . $self->usb_device_path ;
   } else {
     $printer = IO::Socket::INET->new(
       Proto     => "tcp",
@@ -716,7 +739,7 @@ sub test {
   $self->linefeed();
   $self->linefeed();
   $self->linefeed();
-  $self->print_string("");
+  #$self->print_string("");
   $self->linefeed();
   $self->color_2();
   $self->print_text("Part of this\n");
@@ -724,9 +747,8 @@ sub test {
   $self->print_text("is in a different color\n");
   $self->color_2();
   $self->print_text("is in a different color\n");
-  $self->cutpaper();
   $self->linefeed();
-  $self->print_string("");
+  #$self->print_string("");
   $self->write($_ESC);
   $self->write(chr(30));
   $self->write(chr(67));
@@ -747,17 +769,12 @@ sub test {
   $self->linefeed();
   $self->print_text("is in a different color\n");
   $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->cutpaper();
   $self->print();
-  $self->write($_GS);
-  $self->write(chr(40));
-  $self->write(chr(78));
-  $self->write(chr(78));
-  $self->write(chr(78));
-  $self->print();
-  $self->write(chr(0));
-  $self->write(chr(49));
-  $self->write(chr(49));
-  #$self->print();
 
 }
 

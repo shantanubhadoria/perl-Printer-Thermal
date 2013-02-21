@@ -169,6 +169,37 @@ has print_string => (
   default => '',
 );
 
+has font => (
+  is      => 'rw',
+  isa     => 'Int',
+  default => 0,
+);
+
+has underline => (
+  is      => 'rw',
+  isa     => 'Int',
+  default => 0,
+);
+
+has emphasized => (
+  is      => 'rw',
+  isa     => 'Int',
+  default => 0,
+);
+
+has double_height => (
+  is      => 'rw',
+  isa     => 'Int',
+  default => 0,
+);
+
+has double_width => (
+  is      => 'rw',
+  isa     => 'Int',
+  default => 0,
+);
+
+
 my $_ESC = chr(27);
 my $_GS  = chr(29);
 
@@ -251,6 +282,7 @@ nL = MOD 520/256
 
 sub left_margin {
   my ($self,$nl,$nh) = @_;
+  $self->linefeed();
   $self->write($_GS);
   $self->write(chr(76));
   $self->write(chr($nl));
@@ -268,21 +300,6 @@ sub reset {
   my $printer = $self->printer;
   $printer->write($_ESC);
   $printer->write(chr(64));
-}
-
-=head2 $printer->cutpaper()
-
-Cuts the paper. Most Thermal receipt printers support the facility to cut the receipt using this command once printing is done.
-
-=cut
-
-sub cutpaper {
-  my ($self) = @_;
-  $self->linefeed();
-  $self->write($_GS);
-  $self->write(chr(86));
-  $self->write(chr(0));
-  $self->write(chr(255));
 }
 
 =head2 $printer->right_side_charachter_spacing($spacing)
@@ -440,15 +457,24 @@ sub font_size {
   $self->write(chr($size));
 }
 
+sub font_size_esc {
+  my ($self,$size) = @_;
+  $self->write($_ESC);
+  $self->write(chr(33));
+  $self->write(chr($size));
+}
+
 =head2 $printer->font_b();
 
 =cut
 
 sub font_b {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(77));
-  $self->write(chr(1));
+  #$self->write($_ESC);
+  #$self->write(chr(77));
+  #$self->write(chr(1));
+  $self->font(1);
+  $self->apply_printmode();
 }
 
 =head2 $printer->font_a();
@@ -457,9 +483,11 @@ sub font_b {
 
 sub font_a {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(77));
-  $self->write(chr(0));
+  #$self->write($_ESC);
+  #$self->write(chr(77));
+  #$self->write(chr(0));
+  $self->font(0);
+  $self->apply_printmode();
 }
 
 =head2 $printer->printmode($font_number, $double_height_mode, $double_width_mode);
@@ -468,7 +496,7 @@ sub font_a {
 
 =cut
 
-sub printmode{
+sub _printmode{
   my ($self, $font_number, $double_height_mode, $double_width_mode) = @_;
   if(
     ($font_number eq 1 || $font_number eq 0)
@@ -484,15 +512,34 @@ sub printmode{
   }
 }
 
+sub apply_printmode{
+  my ($self) = @_;
+  my $font = $self->font;
+  my $underline = $self->underline;
+  my $emphasized = $self->emphasized;
+  my $double_height = $self->double_height;
+  my $double_width  = $self->double_width;
+  my $value = $font 
+      + ($emphasized * 8)
+      + ($double_height * 16)
+      + ($double_width * 32)
+      + ($underline * 128);
+  $self->write($_ESC);
+  $self->write(chr(33));
+  $self->write(chr($value));
+}
+
 =head2 $printer->underline_off();
 
 =cut
 
 sub underline_off {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(45));
-  $self->write(chr(0));
+  #$self->write($_ESC);
+  #$self->write(chr(45));
+  #$self->write(chr(0));
+  $self->underline(0);
+  $self->apply_printmode();
 }
 
 =head2 $printer->underline_on();
@@ -501,9 +548,11 @@ sub underline_off {
 
 sub underline_on {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(45));
-  $self->write(chr(1));
+  #$self->write($_ESC);
+  #$self->write(chr(45));
+  #$self->write(chr(1));
+  $self->underline(1);
+  $self->apply_printmode();
 }
 
 =head2 $printer->inverse_off();
@@ -570,7 +619,7 @@ sub print_text {
   }
 }
 
-=head2 print_markup
+=head2 print_markup_bbcode
 
 Print text with markup for styling.
 
@@ -656,18 +705,47 @@ sub print_bitmap {
   $self->write(chr(50));
 }
 
+=head2 $printer->color_1()
+
+Prints in first color for dual color printers
+
+=cut
+
 sub color_1{
   my ($self,$color) = @_;
+  $self->linefeed();
   $self->write($_ESC);
   $self->write(chr(114));
   $self->write(chr(0));
 }
 
+=head2 $printer->color_2()
+
+Prints in second color for dual color printers
+
+=cut
+
 sub color_2{
   my ($self,$color) = @_;
+  $self->linefeed();
   $self->write($_ESC);
   $self->write(chr(114));
   $self->write(chr(1));
+}
+
+=head2 $printer->cutpaper()
+
+Cuts the paper. Most Thermal receipt printers support the facility to cut the receipt using this command once printing is done.
+
+=cut
+
+sub cutpaper {
+  my ($self) = @_;
+  $self->linefeed();
+  $self->write($_GS);
+  $self->write(chr(86));
+  $self->write(chr(0));
+  $self->write(chr(255));
 }
 
 =head2 $printer->test()
@@ -678,11 +756,152 @@ Prints a bunch of test strings to see if your printer is working fine/connected 
 
 sub test {
   my ($self) = @_;
-  $self->reset();
-  $self->write("blah\n");
-  $self->barcode_height(68);
-  $self->print_barcode();
-  $self->print_text("Part of this ");
+  $self->write("Write Stuff before linefeed");
+
+  $self->left_margin(1,0);
+  $self->write("Set left margin 1,0");
+  $self->left_margin(20,0);
+  $self->write("Set left margin 20,0");
+  $self->left_margin(1,0);
+
+  #$self->barcode_height(68);
+  #$self->print_barcode();
+
+  $self->right_side_charachter_spacing(1);
+  $self->write("Rgt chr space: 1 space");
+  $self->right_side_charachter_spacing(8);
+  $self->write(" 8 space");
+  $self->right_side_charachter_spacing(0);
+  $self->linefeed();
+
+  $self->horiz_tab();
+  $self->write("Tab before this line");
+  $self->linefeed();
+
+  $self->write("Part of this line ");
+  $self->bold_on();
+  $self->write("is bold");
+  $self->bold_off();
+  $self->linefeed();
+
+  $self->write("default ");
+  $self->doublestrike_on();
+  $self->write("doublestrike on ");
+  $self->doublestrike_off();
+  $self->write("doublestrike off");
+  $self->linefeed();
+
+  $self->write("default ");
+  $self->emphasize_on();
+  $self->write("emphasize on ");
+  $self->emphasize_off();
+  $self->write("emphasize off");
+  $self->linefeed();
+
+  $self->write("default ");
+  $self->font_b();
+  $self->write("font b ");
+  $self->font_a();
+  $self->write("font a");
+  $self->linefeed();
+  
+  $self->write("default ");
+  $self->underline_on();
+  $self->write("underline on");
+  $self->underline_off();
+  $self->write(" underline off");
+  $self->linefeed();
+
+  $self->write("default ");
+  $self->inverse_on();
+  $self->write("inverse on");
+  $self->inverse_off();
+  $self->write(" inverse off");
+  $self->linefeed();
+
+  $self->write("This line is in default color");
+  $self->color_2();
+  $self->write("This line is in color 2");
+  $self->color_1();
+  $self->write("This line is in color 1");
+  $self->linefeed();
+  
+  $self->print_text("Sizes");
+  $self->linefeed();
+  $self->font_size(0);
+  $self->print_text("Size 0");
+  $self->linefeed();
+  $self->font_size(16);
+  $self->print_text("Size 16");
+  $self->linefeed();
+  $self->font_size(32);
+  $self->print_text("Size 32");
+  $self->linefeed();
+  $self->font_size(48);
+  $self->print_text("Size 48");
+  $self->linefeed();
+  $self->font_size(64);
+  $self->print_text("Size 64");
+  $self->linefeed();
+  $self->font_size(80);
+  $self->print_text("Size 80");
+  $self->linefeed();
+  $self->font_size(96);
+  $self->print_text("Size 96");
+  $self->linefeed();
+  $self->font_size(112);
+  $self->print_text("Size 112");
+  $self->linefeed();
+  $self->font_size(200);
+  $self->print_text("Max 200");
+  $self->linefeed();
+  $self->font_size(255);
+  $self->print_text("Max 255");
+  $self->linefeed();
+  $self->font_size(0);
+  
+  $self->print_text("ESC Sizes");
+  $self->linefeed();
+  $self->font_size_esc(0);
+  $self->print_text("Size 0");
+  $self->linefeed();
+  $self->font_size_esc(16);
+  $self->print_text("Size 16");
+  $self->linefeed();
+  $self->font_size_esc(32);
+  $self->print_text("Size 32");
+  $self->linefeed();
+  $self->font_size_esc(48);
+  $self->print_text("Size 48");
+  $self->linefeed();
+  $self->font_size(0);
+  
+  $self->print_string("");
+  
+  $self->write("default ");
+  $self->font_b();
+  $self->write("font b ");
+  $self->font_a();
+  $self->write("font a");
+
+  $self->write("default ");
+  $self->underline_on();
+  $self->write("underline on");
+  $self->underline_off();
+  $self->write(" underline off");
+  $self->linefeed();
+
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  $self->linefeed();
+  
+  $self->cutpaper();
+
+  $self->print();
+  return;
   $self->bold_on();
   $self->print_text("line is bold\n");
   $self->bold_off();

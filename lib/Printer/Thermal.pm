@@ -963,6 +963,7 @@ L<http://search.cpan.org/dist/Printer-Thermal/>
 
 0.01 Tue Feb 19 10:02:07 2013
     - original version; created by ExtUtils::ModuleMaker 0.51
+
 0.02 Thu Feb 28 12:47:07 2013
     - Updated Documentation
     - removed bbcode processing since that functionality doesn't belong inside a module supporting core printer functions

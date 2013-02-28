@@ -1,8 +1,3 @@
-Printer-Thermal
-===============
-
-Printer::Thermal - Perl interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC/POS specification. Which as it happens, includes most receipt/kitchen printers in market.
-
 NAME
     Printer::Thermal - Interface for Thermal (and some dot-matrix and
     inkjet) Printers that support ESC/POS specification. Which as it
@@ -21,9 +16,18 @@ SYNOPSIS
       $printer->bold_off();
       $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
   
-      #For local printer, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers.
+      #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
       my $path = '/dev/ttyACM0';
-      $printer2 = Printer::Thermal->new(device_path=$path);
+      $printer2 = Printer::Thermal->new(serial_device_path=$path);
+      $printer->write("Blah Blah \nReceipt Details\nFooter");
+      $printer->bold_on();
+      $printer->write("Bold Text");
+      $printer->bold_off();
+      $printer->print();
+
+      #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
+      my $path = '/dev/usb/lp0';
+      $printer2 = Printer::Thermal->new(usb_device_path=$path);
       $printer->write("Blah Blah \nReceipt Details\nFooter");
       $printer->bold_on();
       $printer->write("Bold Text");
@@ -43,23 +47,31 @@ DESCRIPTION
     from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
 
 METHODS
-   $printer->device_path
-    This variable contains the path for the printer device file on UNIX-like
-    systems. I haven't added support for Windows and it probably wont work
-    doz as a local printer without some modifications. Feel free to try it
-    out and let me know what happens. This maybe passed in the constructor
+    $printer->usb_device_path
+    This variable contains the path for the printer device file when
+    connected as a usb device on UNIX-like systems. I haven't added support
+    for Windows and it probably wont work in doz as a local printer without
+    some modifications. Feel free to try it out and let me know what
+    happens. This must be passed in the constructor
 
-   $printer->device_ip
+    $printer->serial_device_path
+    This variable contains the path for the printer device file when
+    connected as a serial device on UNIX-like systems. I haven't added
+    support for Windows and it probably wont work in doz as a local printer
+    without some modifications. Feel free to try it out and let me know what
+    happens. This must be passed in the constructor
+
+    $printer->device_ip
     Contains the IP address of the device when its a network printer. The
     module creates IO:Socket::INET object to connect to the printer. This
     can be passed in the constructor.
 
-   $printer->device_port
+    $printer->device_port
     Contains the network port of the device when its a network printer. The
     module creates IO:Socket::INET object to connect to the printer. This
     can be passed in the constructor.
 
-   $printer->baudrate
+    $printer->baudrate
     When used as a local serial device you can set the baudrate of the
     printer too. However default should usually work. let me know if it
     doesn't for you.
@@ -89,10 +101,6 @@ METHODS
 
   $printer->reset()
     Resets the printer
-
-  $printer->cutpaper()
-    Cuts the paper. Most Thermal receipt printers support the facility to
-    cut the receipt using this command once printing is done.
 
   $printer->right_side_charachter_spacing($spacing)
     Takes a one byte number, spacing as a parameter
@@ -132,14 +140,15 @@ METHODS
     newlines after the given amount. Use normal '\n' line breaks for empty
     lines.
 
-  print_markup
-    Print text with markup for styling.
+  $printer->color_1()
+    Prints in first color for dual color printers
 
-    Keyword arguments: markup -- text with a left column of markup as
-    follows: first character denotes style (n=normal, b=bold, u=underline,
-    i=inverse, f=font B) second character denotes justification (l=left,
-    c=centre, r=right) third character must be a space, followed by the text
-    of the line
+  $printer->color_2()
+    Prints in second color for dual color printers
+
+  $printer->cutpaper()
+    Cuts the paper. Most Thermal receipt printers support the facility to
+    cut the receipt using this command once printing is done.
 
   $printer->test()
     Prints a bunch of test strings to see if your printer is working
@@ -147,14 +156,38 @@ METHODS
     double strike looks the same, it happened with my printer too.
 
 BUGS
-    None at the moment
+    Please report any bugs or feature requests to bug-printer-thermal at
+    rt.cpan.org, or through the web interface at
+    http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Printer-Thermal. I will
+    be notified, and then you'll automatically be notified of progress on
+    your bug as I make changes.
 
 SUPPORT
-    shantanu att cpan dott org
+    You can find documentation for this module with the perldoc command.
+
+    perldoc Printer::Thermal
+
+    You can also look for information at:
+
+    * RT: CPAN's request tracker (report bugs here)
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Printer-Thermal
+
+    * AnnoCPAN: Annotated CPAN documentation
+        http://annocpan.org/dist/Printer-Thermal
+
+    * CPAN Ratings
+        http://cpanratings.perl.org/d/Printer-Thermal
+
+    * Search CPAN
+        http://search.cpan.org/dist/Printer-Thermal/
 
 HISTORY
     0.01 Tue Feb 19 10:02:07 2013 - original version; created by
     ExtUtils::ModuleMaker 0.51
+
+    0.02 Thu Feb 28 12:47:07 2013 - Updated Documentation - removed bbcode
+    processing since that functionality doesn't belong inside a module
+    supporting core printer functions
 
 AUTHOR
         Shantanu Bhadoria
@@ -170,6 +203,15 @@ COPYRIGHT
 
     The full text of the license can be found in the LICENSE file included
     with this module.
+
+DEPENDENCIES
+    Moose
+
+    Device::Serialport
+
+    IO::File
+
+    IO::Socket
 
 SEE ALSO
     perl(1).

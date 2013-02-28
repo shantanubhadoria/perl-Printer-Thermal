@@ -14,6 +14,5 @@ WriteMakefile(
                      'Device::SerialPort' => 1.00,
                      'IO::Socket'         => 1.25,
                      'IO::File'           => 0,
-                     'Parse::BBCode'      => 0,
                     },
 );

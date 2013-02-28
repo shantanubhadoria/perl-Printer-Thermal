@@ -7,9 +7,8 @@ use POSIX;
 use Device::SerialPort;
 use IO::File;
 use IO::Socket;
-use Parse::BBCode;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -619,78 +618,6 @@ sub print_text {
   }
 }
 
-=head2 print_markup_bbcode
-
-Print text with markup for styling.
-
-Keyword arguments:
-markup -- text with a left column of markup as follows:
-first character denotes style (n=normal, b=bold, u=underline, i=inverse, f=font B) 
-second character denotes justification (l=left, c=centre, r=right)
-third character must be a space, followed by the text of the line
-
-=cut
-
-sub print_markup_bbcode {
-  my ($self, $markup) = @_;
-  my $p = Parse::BBCode->new(
-    {
-      tags => {
-        b => '[b]%{parse}s[/b]', #bold
-        u => '[u]%{parse}s[/u]', #bold
-        i => '[i]%{parse}s[/i]', #bold
-        L => '[L]%{parse}s[/L]', #bold
-        R => '[R]%{parse}s[/R]', #bold
-        C => '[C]%{parse}s[/C]', #bold
-      },
-    }
-  );
-  my $tree = $p->parse($markup);
-  $self->_walk_bbcode_tags($tree);
-}
-
-sub _walk_bbcode_tags {
-  my ($self,$tag) = @_;
-  my $tagname = $tag->get_name();
-
-  if($tagname eq 'b'){
-      $self->bold_on(); 
-  }elsif($tagname eq 'u'){
-      $self->underline_on(); 
-  }elsif($tagname eq 'i'){
-      $self->inverse_on(); 
-  }elsif($tagname eq 'L'){
-      $self->justify('L'); 
-  }elsif($tagname eq 'R'){
-      $self->justify('R'); 
-  }elsif($tagname eq 'C'){
-      $self->justify('C'); 
-  }
-
-  for my $content ( @{ $tag->get_content() } ){
-    if( ref $content eq 'Parse::BBCode::Tag' ) {
-      $self->_walk_bbcode_tags($content);
-    }else{ 
-      $self->write($content);
-    }
-  }
-
-  if($tagname eq 'b'){
-      $self->bold_off(); 
-  }elsif($tagname eq 'u'){
-      $self->underline_off(); 
-  }elsif($tagname eq 'i'){
-      $self->inverse_off(); 
-  }elsif($tagname eq 'L'){
-      $self->justify('L'); 
-  }elsif($tagname eq 'R'){
-      $self->justify('L'); 
-  }elsif($tagname eq 'C'){
-      $self->justify('L'); 
-  }
-
-}
-
 sub print_bitmap {
   my ($self,$pixels,$w,$h,$output_png) = @_;
   my $counter = 0;
@@ -1002,16 +929,43 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 BUGS
 
-None at the moment
+Please report any bugs or feature requests to bug-printer-thermal at rt.cpan.org, or through the web interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Printer-Thermal. I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
-shantanu att cpan dott org
+You can find documentation for this module with the perldoc command.
+
+perldoc Printer::Thermal 
+
+You can also look for information at:
+
+=over 4
+
+=item * RT: CPAN's request tracker (report bugs here)
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Printer-Thermal>
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/Printer-Thermal>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/Printer-Thermal>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/Printer-Thermal/>
+
+=back
 
 =head1 HISTORY
 
 0.01 Tue Feb 19 10:02:07 2013
     - original version; created by ExtUtils::ModuleMaker 0.51
+0.02 Thu Feb 28 12:47:07 2013
+    - Updated Documentation
+    - removed bbcode processing since that functionality doesn't belong inside a module supporting core printer functions
 
 =head1 AUTHOR
 
@@ -1029,6 +983,16 @@ This program is free software licensed under the...
 
 The full text of the license can be found in the
 LICENSE file included with this module.
+
+=head1 DEPENDENCIES
+
+Moose
+
+Device::Serialport
+
+IO::File
+
+IO::Socket
 
 =head1 SEE ALSO
 

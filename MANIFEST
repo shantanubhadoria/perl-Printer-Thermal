@@ -1,7 +1,0 @@
-MANIFEST
-README
-LICENSE
-Todo
-Makefile.PL
-lib/Printer/Thermal.pm
-t/001_load.t

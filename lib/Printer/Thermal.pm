@@ -18,7 +18,7 @@ use IO::Socket;
 
 
 
-=attr $printer->usb_device_path
+=attr usb_device_path
 
 This variable contains the path for the printer device file when connected as a usb device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
 
@@ -250,7 +250,7 @@ sub _build_printer {
   return $printer;
 }
 
-=head2 $printer->print();
+=method $printer->print();
 
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
@@ -269,7 +269,7 @@ sub print {
   $self->print_string("");
 }
 
-=head2 $printer->write("some text\n");
+=method $printer->write("some text\n");
 
 Writes a bunch of text that you pass here to the module buffer. 
 Note that this will not be passed to the printer till you call $printer->print()
@@ -281,7 +281,7 @@ sub write {
   $self->print_string($self->print_string . $string);
 }
 
-=head2 $printer->left_margin($nl,$nh);
+=method $printer->left_margin($nl,$nh);
 
 Sets the left margin code to the printer. takes two single byte parameters, $nl and $nh.
 To determine the value of these two bytes, use the INT and MOD conventions. INT indicates the integer (or whole number) part of a number, while MOD indicates the
@@ -301,7 +301,7 @@ sub left_margin {
   $self->write(chr($nh));
 }
 
-=head2 $printer->reset()
+=method $printer->reset()
 
 Resets the printer 
 
@@ -314,7 +314,7 @@ sub reset {
   $printer->write(chr(64));
 }
 
-=head2 $printer->right_side_charachter_spacing($spacing)
+=method $printer->right_side_charachter_spacing($spacing)
 
 Takes a one byte number, spacing as a parameter
 
@@ -329,7 +329,7 @@ sub right_side_charachter_spacing {
   }
 }
 
-=head2 $printer->horiz_tab()
+=method $printer->horiz_tab()
 
 =cut
 
@@ -338,7 +338,7 @@ sub horiz_tab{
   $self->write(chr(9));
 }
 
-=head2 $printer->line_spacing($value)
+=method $printer->line_spacing($value)
 
 =cut
 
@@ -356,7 +356,7 @@ sub line_spacing {
   }
 }
 
-=head2 $printer->linefeed()
+=method $printer->linefeed()
 
 =cut
 
@@ -365,7 +365,7 @@ sub linefeed {
   $self->write(chr(10));
 }
 
-=head2 $printer->justify($alignment)
+=method $printer->justify($alignment)
 
 $alignment can be either 'L','C' or 'R' for left center and right justified printing
 
@@ -386,7 +386,7 @@ sub justify {
   $self->write(chr($pos));
 }
 
-=head2 $printer->bold_off();
+=method $printer->bold_off();
 
 =cut
 
@@ -397,7 +397,7 @@ sub bold_off {
   $self->write(chr(0));
 }
 
-=head2 $printer->bold_on();
+=method $printer->bold_on();
 
 =cut
 
@@ -408,7 +408,7 @@ sub bold_on {
   $self->write(chr(1));
 }
 
-=head2 $printer->doublestrike_off();
+=method $printer->doublestrike_off();
 
 =cut
 
@@ -419,7 +419,7 @@ sub doublestrike_off {
   $self->write(chr(0));
 }
 
-=head2 $printer->doublestrike_on();
+=method $printer->doublestrike_on();
 
 =cut
 
@@ -430,7 +430,7 @@ sub doublestrike_on {
   $self->write(chr(1));
 }
 
-=head2 $printer->emphasize_off();
+=method $printer->emphasize_off();
 
 =cut
 
@@ -441,7 +441,7 @@ sub emphasize_off {
   $self->write(chr(0));
 }
 
-=head2 $printer->emphasize_on();
+=method $printer->emphasize_on();
 
 =cut
 
@@ -452,7 +452,7 @@ sub emphasize_on {
   $self->write(chr(255));
 }
 
-=head2 $printer->font_size($n);
+=method $printer->font_size($n);
 
 Defined Region
 0 ≤ n ≤ 255
@@ -476,7 +476,7 @@ sub font_size_esc {
   $self->write(chr($size));
 }
 
-=head2 $printer->font_b();
+=method $printer->font_b();
 
 =cut
 
@@ -489,7 +489,7 @@ sub font_b {
   $self->apply_printmode();
 }
 
-=head2 $printer->font_a();
+=method $printer->font_a();
 
 =cut
 
@@ -502,7 +502,7 @@ sub font_a {
   $self->apply_printmode();
 }
 
-=head2 $printer->printmode($font_number, $double_height_mode, $double_width_mode);
+=method $printer->printmode($font_number, $double_height_mode, $double_width_mode);
 
 0 or 1,
 
@@ -541,7 +541,7 @@ sub apply_printmode{
   $self->write(chr($value));
 }
 
-=head2 $printer->underline_off();
+=method $printer->underline_off();
 
 =cut
 
@@ -554,7 +554,7 @@ sub underline_off {
   $self->apply_printmode();
 }
 
-=head2 $printer->underline_on();
+=method $printer->underline_on();
 
 =cut
 
@@ -567,7 +567,7 @@ sub underline_on {
   $self->apply_printmode();
 }
 
-=head2 $printer->inverse_off();
+=method $printer->inverse_off();
 
 =cut
 
@@ -578,7 +578,7 @@ sub inverse_off {
   $self->write(chr(0));
 }
 
-=head2 $printer->inverse_on();
+=method $printer->inverse_on();
 
 =cut
 
@@ -589,7 +589,7 @@ sub inverse_on {
   $self->write(chr(1));
 }
 
-=head2 $printer->barcode_height($height);
+=method $printer->barcode_height($height);
 
 =cut
 
@@ -600,7 +600,7 @@ sub barcode_height {
   $self->write(chr($height));
 }
 
-=head2 $printer->print_barcode($type,$string)
+=method $printer->print_barcode($type,$string)
 
 =cut
 
@@ -613,7 +613,7 @@ sub print_barcode {
   $self->write($string);
 }
 
-=head2 $printer->print_text($msg,$chars_per_line);
+=method $printer->print_text($msg,$chars_per_line);
 
 Print some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
 
@@ -645,7 +645,7 @@ sub print_bitmap {
   $self->write(chr(50));
 }
 
-=head2 $printer->color_1()
+=method $printer->color_1()
 
 Prints in first color for dual color printers
 
@@ -659,7 +659,7 @@ sub color_1{
   $self->write(chr(0));
 }
 
-=head2 $printer->color_2()
+=method $printer->color_2()
 
 Prints in second color for dual color printers
 
@@ -673,7 +673,7 @@ sub color_2{
   $self->write(chr(1));
 }
 
-=head2 $printer->cutpaper()
+=method $printer->cutpaper()
 
 Cuts the paper. Most Thermal receipt printers support the facility to cut the receipt using this command once printing is done.
 
@@ -688,7 +688,7 @@ sub cutpaper {
   $self->write(chr(255));
 }
 
-=head2 $printer->test()
+=method $printer->test()
 
 Prints a bunch of test strings to see if your printer is working fine/connected properly. Don't worry if some things like emphasized and double strike looks the same, it happened with my printer too.
 

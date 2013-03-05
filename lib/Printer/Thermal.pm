@@ -1,5 +1,13 @@
-package Printer::Thermal;
+use strict;
+use warnings;
 
+package Printer::Thermal;
+# PODNAME: Printer::Thermal
+# ABSTRACT: Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC/POS specification.  
+# COPYRIGHT
+# VERSION
+
+# Dependencies
 use 5.010;
 use Moose;
 use POSIX;
@@ -8,57 +16,9 @@ use Device::SerialPort;
 use IO::File;
 use IO::Socket;
 
-our $VERSION = '0.02';
-$VERSION = eval $VERSION;
 
-=head1 NAME
 
-Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC/POS specification. Which as it happens, includes most receipt/kitchen printers in market.
-
-=head1 SYNOPSIS
-
-  use Printer::Thermal;
-
-  #For Network Printers $port is 9100 in most cases but might differ depending on how you have configured your printer
-  $printer = Printer::Thermal->new(device_ip=>$printer_ip,device_port=>$port);
-
-  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer->print_string variable.
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
-  
-  #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
-  my $path = '/dev/ttyACM0';
-  $printer2 = Printer::Thermal->new(serial_device_path=$path);
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print();
-
-  #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
-  my $path = '/dev/usb/lp0';
-  $printer2 = Printer::Thermal->new(usb_device_path=$path);
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print();
-
-=head1 DESCRIPTION
-
-Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to acheive a bunch of functions, so I didnt want to name it Printer::ESC::P. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose, I apologize!! 
-For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
-
-=cut
-
-#################### main pod documentation end ###################
-
-=head1 METHODS 
-
-=head3 $printer->usb_device_path
+=attr $printer->usb_device_path
 
 This variable contains the path for the printer device file when connected as a usb device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
 
@@ -69,7 +29,7 @@ has usb_device_path => (
   isa => 'Str',
 );
 
-=head3 $printer->serial_device_path
+=attr serial_device_path
 
 This variable contains the path for the printer device file when connected as a serial device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
 
@@ -80,7 +40,7 @@ has serial_device_path => (
   isa => 'Str',
 );
 
-=head3 $printer->device_ip
+=attr device_ip
 
 Contains the IP address of the device when its a network printer. The module creates IO:Socket::INET object to connect to the printer. This can be passed in the constructor.
 
@@ -91,7 +51,7 @@ has device_ip => (
   isa => 'Str',
 );
 
-=head3 $printer->device_port
+=attr device_port
 
 Contains the network port of the device when its a network printer. The module creates IO:Socket::INET object to connect to the printer. This can be passed in the constructor.
 
@@ -102,7 +62,7 @@ has device_port => (
   isa => 'Int',
 );
 
-=head3 $printer->baudrate
+=attr baudrate
 
 When used as a local serial device you can set the baudrate of the printer too. However default should usually work. let me know if it doesn't for you.
 
@@ -114,11 +74,23 @@ has baudrate => (
   default => 38400,
 );
 
+=attr read_char_time
+
+*DECRECATED*
+
+=cut
+
 has read_char_time => (
   is => 'ro',
   isa => 'Int',
   default => 30,
 );
+
+=attr read_const_time
+
+*DECRECATED*
+
+=cut
 
 has read_const_time => (
   is => 'ro',
@@ -126,11 +98,23 @@ has read_const_time => (
   default => 3000,
 );
 
+=attr black_threshold 
+
+Black ink threshold
+
+=cut
+
 has black_threshold => (
   is => 'ro',
   isa => 'Int',
   default => 48,
 );
+
+=attr alpha_threshold 
+
+Black alpha threshold
+
+=cut
 
 has alpha_threshold => (
   is => 'ro',
@@ -138,11 +122,21 @@ has alpha_threshold => (
   default => 127,
 );
 
+=attr heatTime
+
+Heating time to set for Supported Thermal Printers, this affects dot intensity
+
+=cut
+
 has heatTime => (
   is  => 'ro',
   isa => 'Int',
   default => 120,
 );
+
+=attr heatInterval
+
+=cut
 
 has heatInterval => (
   is  => 'ro',
@@ -150,17 +144,36 @@ has heatInterval => (
   default => 50,
 );
 
+=attr heatingDots
+
+=cut
+
 has heatingDots => (
   is  => 'ro',
   isa => 'Int',
   default => 7,
 );
 
+=attr printer
+
+This is the direct device handle to the printer, You must almost never use this.
+Unless you are hacking through the module. If you are using this you should send
+a bug report on why you need to use this.
+
+=cut
+
 has printer => (
   is         => 'ro',
-  #isa     => 'IO::Handle',
   lazy_build => 1,
 );
+
+=attr print_string
+
+This contains the string in the module buffer
+
+my $print_string = $printer->print_string
+
+=cut
 
 has print_string => (
   is      => 'rw',
@@ -927,78 +940,66 @@ sub test {
 no Moose;
 __PACKAGE__->meta->make_immutable;
 
-=head1 BUGS
-
-Please report any bugs or feature requests to bug-printer-thermal at rt.cpan.org, or through the web interface at http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Printer-Thermal. I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-perldoc Printer::Thermal 
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Printer-Thermal>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Printer-Thermal>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Printer-Thermal>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Printer-Thermal/>
-
-=back
-
-=head1 HISTORY
-
-0.01 Tue Feb 19 10:02:07 2013
-    - original version; created by ExtUtils::ModuleMaker 0.51
-
-0.02 Thu Feb 28 12:47:07 2013
-    - Updated Documentation
-    - removed bbcode processing since that functionality doesn't belong inside a module supporting core printer functions
-
-=head1 AUTHOR
-
-    Shantanu Bhadoria
-    CPAN ID: SHANTANU
-    shantanu att cpan dottt org
-    www.shantanubhadoria.com
-
-=head1 COPYRIGHT
-
-This program is free software licensed under the...
-
-	The General Public License (GPL)
-	Version 2, June 1991
-
-The full text of the license can be found in the
-LICENSE file included with this module.
-
-=head1 DEPENDENCIES
-
-Moose
-
-Device::Serialport
-
-IO::File
-
-IO::Socket
-
-=head1 SEE ALSO
-
-perl(1).
-
-=cut
 1;
 
+__END__
+
+=begin wikidoc
+
+= SYNOPSIS
+
+  use Printer::Thermal;
+
+  #For Network Printers $port is 9100 in most cases but might differ depending on how you have configured your printer
+  $printer = Printer::Thermal->new(device_ip=>$printer_ip,device_port=>$port);
+
+  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer->print_string variable.
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
+  
+  #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
+  my $path = '/dev/ttyACM0';
+  $printer2 = Printer::Thermal->new(serial_device_path=$path);
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print();
+
+  #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
+  my $path = '/dev/usb/lp0';
+  $printer2 = Printer::Thermal->new(usb_device_path=$path);
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print();
+
+= DESCRIPTION
+
+Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose, I apologize!! 
+For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
+
+= USAGE
+
+* This Module offers a object oriented interface to ESC/POS Printers. 
+* Create a printer object by providing parameters for one of the three types of 
+printers supported.
+* then call formatting options or write() text to printer object in sequence. 
+* Then call the print() method to dispatch the sequences from the module buffer 
+to the printer. 
+
+Note: While you may call print() after every single command code, this is not advisable as some printers tend to choke up if you send them too many commands too quickly.
+
+= SEE ALSO
+
+* [Device::SerialPort]
+* [IO::File]
+* [IO::Socket]
+
+=end wikidoc
+
+=cut

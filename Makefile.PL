@@ -9,10 +9,15 @@ WriteMakefile(
     AUTHOR       => 'Shantanu Bhadoria (shantanu att cpan dottt org)',
     ABSTRACT     => 'A High Level Interface to Thermal (and some dot-matrix) receipt/kitchen printers supporting Epson\'s ESC/POS specification',
     PREREQ_PM    => {
-                     'Test::Simple' => 0.44,
-                     'Moose'        => 2.00,
-                     'Device::SerialPort' => 1.00,
-                     'IO::Socket'         => 1.25,
-                     'IO::File'           => 0,
-                    },
+        'Test::Simple' => 0.44,
+        'Moose'        => 2.00,
+        'Device::SerialPort' => 1.00,
+        'IO::Socket'         => 1.25,
+        'IO::File'           => 0,
+    },
+    META_MERGE => {
+        resources => {
+            repository => 'git@github.com:shantanubhadoria/Printer-Thermal.git',
+        },
+    },
 );

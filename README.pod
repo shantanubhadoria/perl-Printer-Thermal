@@ -6,7 +6,7 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
@@ -201,6 +201,10 @@ Prints in second color for dual color printers
 =head2 $printer->cutpaper()
 
 Cuts the paper. Most Thermal receipt printers support the facility to cut the receipt using this command once printing is done.
+
+=head2 $printer->open_cash_drawer()
+
+Opens the Cash Drawer connected to the thermal printer.
 
 =head2 $printer->test()
 

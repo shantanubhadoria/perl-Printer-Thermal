@@ -688,6 +688,21 @@ sub cutpaper {
   $self->write(chr(255));
 }
 
+=method $printer->open_cash_drawer()
+
+Opens the Cash Drawer connected to the thermal printer.
+
+=cut
+
+sub open_cash_drawer {
+  my ($self) = @_;
+  $self->write($_ESC);
+  $self->write(chr(112));
+  $self->write(chr(0));
+  $self->write(chr(50));
+  $self->write(chr(250));
+}
+
 =method $printer->test()
 
 Prints a bunch of test strings to see if your printer is working fine/connected properly. Don't worry if some things like emphasized and double strike looks the same, it happened with my printer too.
@@ -841,20 +856,9 @@ sub test {
   $self->cutpaper();
 
   $self->print();
-  return;
   $self->bold_on();
   $self->print_text("line is bold\n");
   $self->bold_off();
-  $self->printmode(0,0,1);
-  $self->print_text("Part of this ");
-  $self->printmode(0,1,0);
-  $self->print_text("Part of this \n");
-  $self->printmode(0,0,0);
-  $self->print_text("Part of this ");
-  $self->printmode(1,0,0);
-  $self->print_text("line is fontB\n");
-  $self->printmode(0,0,0);
-  $self->print_text("Part of this ");
   $self->font_b(1,0,0);
   $self->print_text("line is fontB\n");
   $self->print_text("Part of this is different font\n");
@@ -889,11 +893,11 @@ sub test {
   $self->print_text("line is Inverted\n");
   $self->inverse_off();
   $self->justify("R");
-  $self->print_text("right justified\n");
+  $self->print_text("right justified\r");
   $self->justify("C");
-  $self->print_text("centered\n");
+  $self->print_text("centered\r");
   $self->justify("L"); # justify("L") works too
-  $self->print_text("left justified\n");
+  $self->print_text("left justified\r");
   $self->linefeed();
   $self->linefeed();
   $self->linefeed();

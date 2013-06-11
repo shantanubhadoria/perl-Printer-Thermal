@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 package Printer::Thermal;
+
 # PODNAME: Printer::Thermal
 # ABSTRACT: Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC/POS specification.  
 # COPYRIGHT
@@ -17,6 +18,7 @@ use IO::File;
 use IO::Socket;
 
 
+=encoding utf-8
 
 =attr usb_device_path
 

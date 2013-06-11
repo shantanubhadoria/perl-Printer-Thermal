@@ -502,28 +502,6 @@ sub font_a {
   $self->apply_printmode();
 }
 
-=method $printer->printmode($font_number, $double_height_mode, $double_width_mode);
-
-0 or 1,
-
-=cut
-
-sub _printmode{
-  my ($self, $font_number, $double_height_mode, $double_width_mode) = @_;
-  if(
-    ($font_number eq 1 || $font_number eq 0)
-    && ($double_height_mode eq 1 || $double_height_mode eq 0)
-    && ($double_width_mode eq 1 || $double_width_mode eq 0)
-    ){
-    my $value = $font_number 
-      + ($double_height_mode * 16)
-      + ($double_height_mode * 32);
-    $self->write($_ESC);
-    $self->write(chr(33));
-    $self->write(chr($value));
-  }
-}
-
 sub apply_printmode{
   my ($self) = @_;
   my $font = $self->font;
@@ -966,7 +944,7 @@ __END__
   
   #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/ttyACM0';
-  $printer2 = Printer::Thermal->new(serial_device_path=$path);
+  $printer = Printer::Thermal->new(serial_device_path=$path);
   $printer->write("Blah Blah \nReceipt Details\nFooter");
   $printer->bold_on();
   $printer->write("Bold Text");
@@ -975,7 +953,7 @@ __END__
 
   #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/usb/lp0';
-  $printer2 = Printer::Thermal->new(usb_device_path=$path);
+  $printer = Printer::Thermal->new(usb_device_path=$path);
   $printer->write("Blah Blah \nReceipt Details\nFooter");
   $printer->bold_on();
   $printer->write("Bold Text");
@@ -986,6 +964,11 @@ __END__
 
 Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose, I apologize!! 
 For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
+
+= NOTES
+
+* If the printer prints out garbled characters instead of proper text, try specifying the baudrate parameter when creating printer object when you create the printer object(not for network or USB printers)
+    $printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 = USAGE
 

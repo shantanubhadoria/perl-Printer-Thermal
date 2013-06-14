@@ -66,7 +66,11 @@ has device_port => (
 
 =attr baudrate
 
-When used as a local serial device you can set the baudrate of the printer too. However default should usually work. let me know if it doesn't for you.
+When used as a local serial device you can set the baudrate of the printer too. Default (38400) will usually work, but not always. 
+
+This param may be specified when creating printer object to make sure it works properly.
+
+$printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 =cut
 
@@ -102,7 +106,7 @@ has read_const_time => (
 
 =attr black_threshold 
 
-Black ink threshold
+Black ink threshold, This param may be specified when creating the printer object. Default is 48.
 
 =cut
 
@@ -114,7 +118,7 @@ has black_threshold => (
 
 =attr alpha_threshold 
 
-Black alpha threshold
+Alpha threshold, This param may be specified when creating the printer object. Default is 127.
 
 =cut
 
@@ -126,7 +130,9 @@ has alpha_threshold => (
 
 =attr heatTime
 
-Heating time to set for Supported Thermal Printers, this affects dot intensity
+Heating time to set for Supported Thermal Printers, this affects dot intensity.
+
+This param may be specified when creating the printer object. Default is 120
 
 =cut
 
@@ -138,6 +144,8 @@ has heatTime => (
 
 =attr heatInterval
 
+This param may be specified when creating the printer object. Default is 50
+
 =cut
 
 has heatInterval => (
@@ -147,6 +155,8 @@ has heatInterval => (
 );
 
 =attr heatingDots
+
+This param may be specified when creating the printer object. Default is 7
 
 =cut
 
@@ -159,8 +169,10 @@ has heatingDots => (
 =attr printer
 
 This is the direct device handle to the printer, You must almost never use this.
-Unless you are hacking through the module. If you are using this you should send
-a bug report on why you need to use this.
+Unless you are hacking through the module. If you are using this you must send me
+a bug report on why you had to use this.
+
+You can access it with $printer->printer
 
 =cut
 
@@ -171,7 +183,7 @@ has printer => (
 
 =attr print_string
 
-This contains the string in the module buffer
+This contains the string in the module buffer that will be sent to the printer when you call $printer->print();
 
 my $print_string = $printer->print_string
 
@@ -256,10 +268,11 @@ sub _build_printer {
 
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
-  $printer->write("hello Printer\n");
-  $printer->linefeed();
-  $printer->cutpaper();
-  $pritner->print(); # Sends the all the commands before this to the printer in one go. 
+
+    $printer->write("hello Printer\n");
+    $printer->linefeed();
+    $printer->cutpaper();
+    $pritner->print(); # Sends the all the commands before this to the printer in one go. 
 
 =cut
 
@@ -332,7 +345,7 @@ sub right_side_charachter_spacing {
 }
 
 =method $printer->horiz_tab()
-
+adds a horizontal tab charachter like a \t to the print string.
 =cut
 
 sub horiz_tab{
@@ -341,6 +354,8 @@ sub horiz_tab{
 }
 
 =method $printer->line_spacing($value)
+
+Allows you to set the line spacing for the printer.
 
 =cut
 
@@ -359,6 +374,8 @@ sub line_spacing {
 }
 
 =method $printer->linefeed()
+
+sends a new line charachter, i.e carriage return and line feed
 
 =cut
 
@@ -962,7 +979,8 @@ __END__
 
 = DESCRIPTION
 
-Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose, I apologize!! 
+Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose and I apologize for that!! 
+
 For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
 
 = NOTES

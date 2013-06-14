@@ -394,9 +394,8 @@ sub justify {
 
 sub bold_off {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(69));
-  $self->write(chr(0));
+  $self->emphasized(0);
+  $self->apply_printmode();
 }
 
 =method $printer->bold_on();
@@ -405,9 +404,8 @@ sub bold_off {
 
 sub bold_on {
   my ($self) = @_;
-  $self->write($_ESC);
-  $self->write(chr(69));
-  $self->write(chr(1));
+  $self->emphasized(1);
+  $self->apply_printmode();
 }
 
 =method $printer->doublestrike_off();

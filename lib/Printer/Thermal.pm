@@ -335,13 +335,13 @@ sub reset {
   $printer->write(chr(64));
 }
 
-=method $printer->right_side_charachter_spacing($spacing)
+=method $printer->right_side_character_spacing($spacing)
 
 Takes a one byte number, spacing as a parameter
 
 =cut
 
-sub right_side_charachter_spacing {
+sub right_side_character_spacing {
   my ($self,$spacing) = @_;
   if($spacing <= 255 && $spacing >=0){
     $self->write($_ESC);
@@ -351,7 +351,7 @@ sub right_side_charachter_spacing {
 }
 
 =method $printer->horiz_tab()
-adds a horizontal tab charachter like a \t to the print string.
+adds a horizontal tab character like a \t to the print string.
 =cut
 
 sub horiz_tab{
@@ -381,7 +381,7 @@ sub line_spacing {
 
 =method $printer->linefeed()
 
-sends a new line charachter, i.e carriage return and line feed
+sends a new line character, i.e carriage return and line feed
 
 =cut
 
@@ -723,11 +723,11 @@ sub test {
   #$self->barcode_height(68);
   #$self->print_barcode();
 
-  $self->right_side_charachter_spacing(1);
+  $self->right_side_character_spacing(1);
   $self->write("Rgt chr space: 1 space");
-  $self->right_side_charachter_spacing(8);
+  $self->right_side_character_spacing(8);
   $self->write(" 8 space");
-  $self->right_side_charachter_spacing(0);
+  $self->right_side_character_spacing(0);
   $self->linefeed();
 
   $self->horiz_tab();

@@ -16,6 +16,7 @@ use POSIX;
 use Device::SerialPort;
 use IO::File;
 use IO::Socket;
+use Time::HiRes qw(usleep);
 
 
 =encoding utf-8

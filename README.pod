@@ -6,7 +6,7 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -42,7 +42,8 @@ version 0.11
 
 =head1 DESCRIPTION
 
-Some might not find the module name accurate since ESCE<sol>P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose, I apologize!! 
+Some might not find the module name accurate since ESCE<sol>P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose and I apologize for that!! 
+
 For ESCE<sol>P codes refer the guide from Epson http:E<sol>E<sol>support.epson.ruE<sol>uploadE<sol>library_fileE<sol>14E<sol>esc-p.pdf
 
 =head1 ATTRIBUTES
@@ -65,7 +66,11 @@ Contains the network port of the device when its a network printer. The module c
 
 =head2 baudrate
 
-When used as a local serial device you can set the baudrate of the printer too. However default should usually work. let me know if it doesn't for you.
+When used as a local serial device you can set the baudrate of the printer too. Default (38400) will usually work, but not always. 
+
+This param may be specified when creating printer object to make sure it works properly.
+
+$printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 =head2 read_char_time
 
@@ -77,29 +82,37 @@ When used as a local serial device you can set the baudrate of the printer too. 
 
 =head2 black_threshold 
 
-Black ink threshold
+Black ink threshold, This param may be specified when creating the printer object. Default is 48.
 
 =head2 alpha_threshold 
 
-Black alpha threshold
+Alpha threshold, This param may be specified when creating the printer object. Default is 127.
 
 =head2 heatTime
 
-Heating time to set for Supported Thermal Printers, this affects dot intensity
+Heating time to set for Supported Thermal Printers, this affects dot intensity.
+
+This param may be specified when creating the printer object. Default is 120
 
 =head2 heatInterval
 
+This param may be specified when creating the printer object. Default is 50
+
 =head2 heatingDots
+
+This param may be specified when creating the printer object. Default is 7
 
 =head2 printer
 
 This is the direct device handle to the printer, You must almost never use this.
-Unless you are hacking through the module. If you are using this you should send
-a bug report on why you need to use this.
+Unless you are hacking through the module. If you are using this you must send me
+a bug report on why you had to use this.
+
+You can access it with $printer->printer
 
 =head2 print_string
 
-This contains the string in the module buffer
+This contains the string in the module buffer that will be sent to the printer when you call $printer->print();
 
 my $print_string = $printer->print_string
 
@@ -109,10 +122,11 @@ my $print_string = $printer->print_string
 
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
-  $printer->write("hello Printer\n");
-  $printer->linefeed();
-  $printer->cutpaper();
-  $pritner->print(); # Sends the all the commands before this to the printer in one go. 
+
+    $printer->write("hello Printer\n");
+    $printer->linefeed();
+    $printer->cutpaper();
+    $pritner->print(); # Sends the all the commands before this to the printer in one go. 
 
 =head2 $printer->write("some text\n");
 
@@ -132,15 +146,20 @@ nL = MOD 520/256
 
 Resets the printer 
 
-=head2 $printer->right_side_charachter_spacing($spacing)
+=head2 $printer->right_side_character_spacing($spacing)
 
 Takes a one byte number, spacing as a parameter
 
 =head2 $printer->horiz_tab()
+adds a horizontal tab character like a \t to the print string.
 
 =head2 $printer->line_spacing($value)
 
+Allows you to set the line spacing for the printer.
+
 =head2 $printer->linefeed()
+
+sends a new line character, i.e carriage return and line feed
 
 =head2 $printer->justify($alignment)
 

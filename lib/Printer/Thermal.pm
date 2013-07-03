@@ -279,8 +279,14 @@ The following bunch of commands print a text to a printer, move down one line, a
 sub print {
   my ($self,$string) = @_;
   my $printer = $self->printer;
-  print "\nPrinting : " . $self->print_string . "\n";
-  $printer->write( $self->print_string );
+  my @chunks;
+  my $string = $self->print_string;
+  my $n = 300; # Size of each chunk in bytes
+  @chunks = unpack "a$n" x ((length($string)/$n)-1) . "a*", $string;;    
+  for my $chunk( @chunks ){
+      $printer->write( $chunk );
+      usleep(1000);
+  }
   $self->print_string("");
 }
 

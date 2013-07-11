@@ -1,9 +1,8 @@
 Changes for Printer::Thermal 
 
-    - Time for the first release
-
 {{$NEXT}}
 
+  - Code Cleanup added YML to ignore list
 
 0.13
 

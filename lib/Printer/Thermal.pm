@@ -8,11 +8,11 @@ package Printer::Thermal;
 # COPYRIGHT
 # VERSION
 
+# Dependencies
 use 5.010;
 use Moose;
 use POSIX;
 
-# Dependencies
 use Device::SerialPort;
 use IO::File;
 use IO::Socket;

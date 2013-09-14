@@ -6,7 +6,7 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =head1 SYNOPSIS
 

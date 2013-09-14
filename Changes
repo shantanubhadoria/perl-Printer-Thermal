@@ -1,6 +1,9 @@
 Changelog for Printer-Thermal
 
-0.17 2013-09-14T03:44:28
+0.17 2013-09-14T03:44:55
+ - v0.17
+   
+    - Renamed example to examples to match spec [Shantanu] [Shantanu]
  - Renamed example to examples to match spec [Shantanu]
 
 0.16 2013-09-14T01:50:04

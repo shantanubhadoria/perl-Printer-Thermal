@@ -278,7 +278,7 @@ The following bunch of commands print a text to a printer, move down one line, a
 =cut
 
 sub print {
-  my ($self,$string) = @_;
+  my ($self) = @_;
   my $printer = $self->printer;
   my @chunks;
   my $string = $self->print_string;
@@ -419,7 +419,7 @@ sub justify {
 sub bold_off {
   my ($self) = @_;
   $self->emphasized(0);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
 =method $printer->bold_on();
@@ -429,7 +429,7 @@ sub bold_off {
 sub bold_on {
   my ($self) = @_;
   $self->emphasized(1);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
 =method $printer->doublestrike_off();
@@ -493,6 +493,14 @@ sub font_size {
   $self->write(chr($size));
 }
 
+=method font_size_esc
+
+Set ESC specified font size
+
+    $printer->font_size_esc($size);
+
+=cut
+
 sub font_size_esc {
   my ($self,$size) = @_;
   $self->write($_ESC);
@@ -510,7 +518,7 @@ sub font_b {
   #$self->write(chr(77));
   #$self->write(chr(1));
   $self->font(1);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
 =method $printer->font_a();
@@ -523,10 +531,10 @@ sub font_a {
   #$self->write(chr(77));
   #$self->write(chr(0));
   $self->font(0);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
-sub apply_printmode{
+sub _apply_printmode{
   my ($self) = @_;
   my $font = $self->font;
   my $underline = $self->underline;
@@ -553,7 +561,7 @@ sub underline_off {
   #$self->write(chr(45));
   #$self->write(chr(0));
   $self->underline(0);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
 =method $printer->underline_on();
@@ -566,7 +574,7 @@ sub underline_on {
   #$self->write(chr(45));
   #$self->write(chr(1));
   $self->underline(1);
-  $self->apply_printmode();
+  $self->_apply_printmode();
 }
 
 =method $printer->inverse_off();
@@ -632,6 +640,12 @@ sub print_text {
     $self->write($msg);
   }
 }
+
+=method print_bitmap
+
+To be done: This function is not implemented yet.
+
+=cut
 
 sub print_bitmap {
   my ($self,$pixels,$w,$h,$output_png) = @_;

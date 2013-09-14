@@ -1,6 +1,12 @@
 Changelog for Printer-Thermal
 
-0.15 2013-09-12T06:51:41
+0.16 2013-09-14T01:48:11
+ - Fixed Pos Errors [Shantanu]
+
+0.15 2013-09-12T06:52:21
+ - v0.15
+   
+    - Bump Changes [Shantanu Bhadoria] [Shantanu]
  - Bump Changes [Shantanu Bhadoria]
 
 0.14 2013-07-11T03:40:42

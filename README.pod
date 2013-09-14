@@ -6,7 +6,7 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -185,6 +185,12 @@ However, 1 ≤ vertical direction magnification ratio ≤ 8, 1 ≤ horizontal di
 Initial Value n=0
 Function Specifies the character size (magnification ratio in the vertical and horizontal directions).
 
+=head2 font_size_esc
+
+Set ESC specified font size
+
+    $printer->font_size_esc($size);
+
 =head2 $printer->font_b();
 
 =head2 $printer->font_a();
@@ -204,6 +210,10 @@ Function Specifies the character size (magnification ratio in the vertical and h
 =head2 $printer->print_text($msg,$chars_per_line);
 
 Print some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
+
+=head2 print_bitmap
+
+To be done: This function is not implemented yet.
 
 =head2 $printer->color_1()
 
@@ -309,6 +319,10 @@ Shantanu Bhadoria <shantanu at cpan dott org>
 =head1 CONTRIBUTORS
 
 =over 4
+
+=item *
+
+Shantanu <shantanu@cpan.org>
 
 =item *
 

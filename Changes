@@ -1,6 +1,12 @@
 Changelog for Printer-Thermal
 
-0.16 2013-09-14T01:48:11
+0.17 2013-09-14T03:44:28
+ - Renamed example to examples to match spec [Shantanu]
+
+0.16 2013-09-14T01:50:04
+ - v0.16
+   
+    - Fixed Pos Errors [Shantanu] [Shantanu]
  - Fixed Pos Errors [Shantanu]
 
 0.15 2013-09-12T06:52:21

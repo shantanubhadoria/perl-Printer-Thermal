@@ -265,7 +265,7 @@ sub _build_printer {
   return $printer;
 }
 
-=method $printer->print();
+=method $printer->print()
 
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
@@ -291,7 +291,7 @@ sub print {
   $self->print_string("");
 }
 
-=method $printer->write("some text\n");
+=method $printer->write("some text\n")
 
 Writes a bunch of text that you pass here to the module buffer. 
 Note that this will not be passed to the printer till you call $printer->print()
@@ -303,7 +303,7 @@ sub write {
   $self->print_string($self->print_string . $string);
 }
 
-=method $printer->left_margin($nl,$nh);
+=method $printer->left_margin($nl,$nh)
 
 Sets the left margin code to the printer. takes two single byte parameters, $nl and $nh.
 To determine the value of these two bytes, use the INT and MOD conventions. INT indicates the integer (or whole number) part of a number, while MOD indicates the
@@ -352,7 +352,9 @@ sub right_side_character_spacing {
 }
 
 =method $printer->horiz_tab()
-adds a horizontal tab character like a \t to the print string.
+
+Adds a horizontal tab character like a \t to the print string.
+
 =cut
 
 sub horiz_tab{
@@ -382,7 +384,7 @@ sub line_spacing {
 
 =method $printer->linefeed()
 
-sends a new line character, i.e carriage return and line feed
+Sends a new line character, i.e carriage return and line feed
 
 =cut
 
@@ -412,7 +414,9 @@ sub justify {
   $self->write(chr($pos));
 }
 
-=method $printer->bold_off();
+=method $printer->bold_off()
+
+Turns bold printing off
 
 =cut
 
@@ -422,7 +426,9 @@ sub bold_off {
   $self->_apply_printmode();
 }
 
-=method $printer->bold_on();
+=method $printer->bold_on()
+
+Turns bold printing on
 
 =cut
 
@@ -432,7 +438,9 @@ sub bold_on {
   $self->_apply_printmode();
 }
 
-=method $printer->doublestrike_off();
+=method $printer->doublestrike_off()
+
+Turns doublestrike on characters off
 
 =cut
 
@@ -443,7 +451,9 @@ sub doublestrike_off {
   $self->write(chr(0));
 }
 
-=method $printer->doublestrike_on();
+=method $printer->doublestrike_on()
+
+Turns doublestrike on characters on
 
 =cut
 
@@ -454,7 +464,9 @@ sub doublestrike_on {
   $self->write(chr(1));
 }
 
-=method $printer->emphasize_off();
+=method $printer->emphasize_off()
+
+Turns off emphasize(read ESC/POS documentation)
 
 =cut
 
@@ -465,7 +477,9 @@ sub emphasize_off {
   $self->write(chr(0));
 }
 
-=method $printer->emphasize_on();
+=method $printer->emphasize_on()
+
+Turns on emphasize(read ESC/POS documentation)
 
 =cut
 
@@ -476,7 +490,7 @@ sub emphasize_on {
   $self->write(chr(255));
 }
 
-=method $printer->font_size($n);
+=method $printer->font_size($n)
 
 Defined Region
 0 ≤ n ≤ 255
@@ -493,7 +507,7 @@ sub font_size {
   $self->write(chr($size));
 }
 
-=method font_size_esc
+=method $printer->font_size_esc($size)
 
 Set ESC specified font size
 
@@ -508,7 +522,9 @@ sub font_size_esc {
   $self->write(chr($size));
 }
 
-=method $printer->font_b();
+=method $printer->font_b()
+
+Switches printing to font b
 
 =cut
 
@@ -521,7 +537,9 @@ sub font_b {
   $self->_apply_printmode();
 }
 
-=method $printer->font_a();
+=method $printer->font_a()
+
+Switches printing to font a
 
 =cut
 
@@ -551,7 +569,9 @@ sub _apply_printmode{
   $self->write(chr($value));
 }
 
-=method $printer->underline_off();
+=method $printer->underline_off()
+
+Switches off underline
 
 =cut
 
@@ -566,6 +586,8 @@ sub underline_off {
 
 =method $printer->underline_on();
 
+Switches on underline
+
 =cut
 
 sub underline_on {
@@ -579,6 +601,8 @@ sub underline_on {
 
 =method $printer->inverse_off();
 
+Switches off inverse text
+
 =cut
 
 sub inverse_off {
@@ -589,6 +613,8 @@ sub inverse_off {
 }
 
 =method $printer->inverse_on();
+
+Switches on inverse text
 
 =cut
 
@@ -601,6 +627,8 @@ sub inverse_on {
 
 =method $printer->barcode_height($height);
 
+Sets barcode height
+
 =cut
 
 sub barcode_height {
@@ -611,6 +639,8 @@ sub barcode_height {
 }
 
 =method $printer->print_barcode($type,$string)
+
+Prints barcode
 
 =cut
 
@@ -625,7 +655,7 @@ sub print_barcode {
 
 =method $printer->print_text($msg,$chars_per_line);
 
-Print some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
+Prints some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
 
 =cut
 

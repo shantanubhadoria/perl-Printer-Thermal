@@ -6,7 +6,7 @@ Printer::Thermal - Interface for Thermal (and some dot-matrix and inkjet) Printe
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,7 @@ my $print_string = $printer->print_string
 
 =head1 METHODS
 
-=head2 $printer->print();
+=head2 $printer->print()
 
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
@@ -128,12 +128,12 @@ The following bunch of commands print a text to a printer, move down one line, a
     $printer->cutpaper();
     $pritner->print(); # Sends the all the commands before this to the printer in one go. 
 
-=head2 $printer->write("some text\n");
+=head2 $printer->write("some text\n")
 
 Writes a bunch of text that you pass here to the module buffer. 
 Note that this will not be passed to the printer till you call $printer->print()
 
-=head2 $printer->left_margin($nl,$nh);
+=head2 $printer->left_margin($nl,$nh)
 
 Sets the left margin code to the printer. takes two single byte parameters, $nl and $nh.
 To determine the value of these two bytes, use the INT and MOD conventions. INT indicates the integer (or whole number) part of a number, while MOD indicates the
@@ -151,7 +151,8 @@ Resets the printer
 Takes a one byte number, spacing as a parameter
 
 =head2 $printer->horiz_tab()
-adds a horizontal tab character like a \t to the print string.
+
+Adds a horizontal tab character like a \t to the print string.
 
 =head2 $printer->line_spacing($value)
 
@@ -159,25 +160,37 @@ Allows you to set the line spacing for the printer.
 
 =head2 $printer->linefeed()
 
-sends a new line character, i.e carriage return and line feed
+Sends a new line character, i.e carriage return and line feed
 
 =head2 $printer->justify($alignment)
 
 $alignment can be either 'L','C' or 'R' for left center and right justified printing
 
-=head2 $printer->bold_off();
+=head2 $printer->bold_off()
 
-=head2 $printer->bold_on();
+Turns bold printing off
 
-=head2 $printer->doublestrike_off();
+=head2 $printer->bold_on()
 
-=head2 $printer->doublestrike_on();
+Turns bold printing on
 
-=head2 $printer->emphasize_off();
+=head2 $printer->doublestrike_off()
 
-=head2 $printer->emphasize_on();
+Turns doublestrike on characters off
 
-=head2 $printer->font_size($n);
+=head2 $printer->doublestrike_on()
+
+Turns doublestrike on characters on
+
+=head2 $printer->emphasize_off()
+
+Turns off emphasize(read ESC/POS documentation)
+
+=head2 $printer->emphasize_on()
+
+Turns on emphasize(read ESC/POS documentation)
+
+=head2 $printer->font_size($n)
 
 Defined Region
 0 ≤ n ≤ 255
@@ -185,31 +198,47 @@ However, 1 ≤ vertical direction magnification ratio ≤ 8, 1 ≤ horizontal di
 Initial Value n=0
 Function Specifies the character size (magnification ratio in the vertical and horizontal directions).
 
-=head2 font_size_esc
+=head2 $printer->font_size_esc($size)
 
 Set ESC specified font size
 
     $printer->font_size_esc($size);
 
-=head2 $printer->font_b();
+=head2 $printer->font_b()
 
-=head2 $printer->font_a();
+Switches printing to font b
 
-=head2 $printer->underline_off();
+=head2 $printer->font_a()
+
+Switches printing to font a
+
+=head2 $printer->underline_off()
+
+Switches off underline
 
 =head2 $printer->underline_on();
 
+Switches on underline
+
 =head2 $printer->inverse_off();
+
+Switches off inverse text
 
 =head2 $printer->inverse_on();
 
+Switches on inverse text
+
 =head2 $printer->barcode_height($height);
+
+Sets barcode height
 
 =head2 $printer->print_barcode($type,$string)
 
+Prints barcode
+
 =head2 $printer->print_text($msg,$chars_per_line);
 
-Print some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
+Prints some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
 
 =head2 print_bitmap
 

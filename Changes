@@ -1,5 +1,11 @@
 Changelog for Printer-Thermal
 
+0.19 2013-09-15T05:34:04
+ - Fixed POD Errors [Shantanu]
+
+0.18 2013-09-14T04:29:29
+ - v0.18 [Shantanu]
+
 0.17 2013-09-14T03:44:55
  - v0.17
    

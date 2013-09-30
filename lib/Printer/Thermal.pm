@@ -4,7 +4,7 @@ use warnings;
 package Printer::Thermal;
 
 # PODNAME: Printer::Thermal
-# ABSTRACT: Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC/POS specification.  
+# ABSTRACT: Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC-POS specification.  
 # COPYRIGHT
 # VERSION
 
@@ -71,7 +71,7 @@ When used as a local serial device you can set the baudrate of the printer too. 
 
 This param may be specified when creating printer object to make sure it works properly.
 
-$printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
+$printer = Printer::Thermal-E<gt>new(serial_device_path =E<gt> '/dev/ttyACM0', baudrate =E<gt> 9600);
 
 =cut
 
@@ -173,7 +173,7 @@ This is the direct device handle to the printer, You must almost never use this.
 Unless you are hacking through the module. If you are using this you must send me
 a bug report on why you had to use this.
 
-You can access it with $printer->printer
+You can access it with $printer-E<gt>printer
 
 =cut
 
@@ -184,9 +184,9 @@ has printer => (
 
 =attr print_string
 
-This contains the string in the module buffer that will be sent to the printer when you call $printer->print();
+This contains the string in the module buffer that will be sent to the printer when you call $printer-E<gt>print();
 
-my $print_string = $printer->print_string
+my $print_string = $printer-E<gt>print_string
 
 =cut
 
@@ -196,11 +196,21 @@ has print_string => (
   default => '',
 );
 
+=attr font
+
+Set ESC-POS Font
+
+=cut
+
 has font => (
   is      => 'rw',
   isa     => 'Int',
   default => 0,
 );
+
+=attr underline
+
+=cut
 
 has underline => (
   is      => 'rw',
@@ -208,17 +218,29 @@ has underline => (
   default => 0,
 );
 
+=attr emphasized
+
+=cut
+
 has emphasized => (
   is      => 'rw',
   isa     => 'Int',
   default => 0,
 );
 
+=attr double_height
+
+=cut
+
 has double_height => (
   is      => 'rw',
   isa     => 'Int',
   default => 0,
 );
+
+=double_width
+
+=cut
 
 has double_width => (
   is      => 'rw',
@@ -265,15 +287,16 @@ sub _build_printer {
   return $printer;
 }
 
-=method $printer->print()
+=method print
 
+$printer-E<gt>print()
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
 
-    $printer->write("hello Printer\n");
-    $printer->linefeed();
-    $printer->cutpaper();
-    $pritner->print(); # Sends the all the commands before this to the printer in one go. 
+    $printer-E<gt>write("hello Printer\n");
+    $printer-E<gt>linefeed();
+    $printer-E<gt>cutpaper();
+    $printer-E<gt>print(); # Sends the all the commands before this to the printer in one go. 
 
 =cut
 
@@ -291,10 +314,11 @@ sub print {
   $self->print_string("");
 }
 
-=method $printer->write("some text\n")
+=method write
 
+$printer-E<gt>write("some text\n")
 Writes a bunch of text that you pass here to the module buffer. 
-Note that this will not be passed to the printer till you call $printer->print()
+Note that this will not be passed to the printer till you call $printer-E<gt>print()
 
 =cut
 
@@ -303,8 +327,9 @@ sub write {
   $self->print_string($self->print_string . $string);
 }
 
-=method $printer->left_margin($nl,$nh)
+=method left_margin
 
+$printer-E<gt>left_margin($nl,$nh)
 Sets the left margin code to the printer. takes two single byte parameters, $nl and $nh.
 To determine the value of these two bytes, use the INT and MOD conventions. INT indicates the integer (or whole number) part of a number, while MOD indicates the
 remainder of a division operation.
@@ -323,7 +348,7 @@ sub left_margin {
   $self->write(chr($nh));
 }
 
-=method $printer->reset()
+=method reset
 
 Resets the printer 
 
@@ -336,7 +361,7 @@ sub reset {
   $printer->write(chr(64));
 }
 
-=method $printer->right_side_character_spacing($spacing)
+=method right_side_character_spacing
 
 Takes a one byte number, spacing as a parameter
 
@@ -351,7 +376,7 @@ sub right_side_character_spacing {
   }
 }
 
-=method $printer->horiz_tab()
+=method horiz_tab
 
 Adds a horizontal tab character like a \t to the print string.
 
@@ -362,7 +387,7 @@ sub horiz_tab{
   $self->write(chr(9));
 }
 
-=method $printer->line_spacing($value)
+=method line_spacing
 
 Allows you to set the line spacing for the printer.
 
@@ -382,7 +407,7 @@ sub line_spacing {
   }
 }
 
-=method $printer->linefeed()
+=method linefeed
 
 Sends a new line character, i.e carriage return and line feed
 
@@ -393,7 +418,7 @@ sub linefeed {
   $self->write(chr(10));
 }
 
-=method $printer->justify($alignment)
+=method justify
 
 $alignment can be either 'L','C' or 'R' for left center and right justified printing
 
@@ -414,7 +439,7 @@ sub justify {
   $self->write(chr($pos));
 }
 
-=method $printer->bold_off()
+=method bold_off
 
 Turns bold printing off
 
@@ -426,7 +451,7 @@ sub bold_off {
   $self->_apply_printmode();
 }
 
-=method $printer->bold_on()
+=method bold_on
 
 Turns bold printing on
 
@@ -438,7 +463,7 @@ sub bold_on {
   $self->_apply_printmode();
 }
 
-=method $printer->doublestrike_off()
+=method doublestrike_off
 
 Turns doublestrike on characters off
 
@@ -451,7 +476,7 @@ sub doublestrike_off {
   $self->write(chr(0));
 }
 
-=method $printer->doublestrike_on()
+=method doublestrike_on
 
 Turns doublestrike on characters on
 
@@ -464,9 +489,9 @@ sub doublestrike_on {
   $self->write(chr(1));
 }
 
-=method $printer->emphasize_off()
+=method emphasize_off
 
-Turns off emphasize(read ESC/POS documentation)
+Turns off emphasize(read ESC-POS documentation)
 
 =cut
 
@@ -477,9 +502,9 @@ sub emphasize_off {
   $self->write(chr(0));
 }
 
-=method $printer->emphasize_on()
+=method emphasize_on
 
-Turns on emphasize(read ESC/POS documentation)
+Turns on emphasize(read ESC-POS documentation)
 
 =cut
 
@@ -490,7 +515,7 @@ sub emphasize_on {
   $self->write(chr(255));
 }
 
-=method $printer->font_size($n)
+=method font_size
 
 Defined Region
 0 ≤ n ≤ 255
@@ -507,11 +532,11 @@ sub font_size {
   $self->write(chr($size));
 }
 
-=method $printer->font_size_esc($size)
+=method font_size_esc
 
 Set ESC specified font size
 
-    $printer->font_size_esc($size);
+    $printer-E<gt>font_size_esc($size);
 
 =cut
 
@@ -522,7 +547,7 @@ sub font_size_esc {
   $self->write(chr($size));
 }
 
-=method $printer->font_b()
+=method font_b
 
 Switches printing to font b
 
@@ -537,7 +562,7 @@ sub font_b {
   $self->_apply_printmode();
 }
 
-=method $printer->font_a()
+=method font_a
 
 Switches printing to font a
 
@@ -569,7 +594,7 @@ sub _apply_printmode{
   $self->write(chr($value));
 }
 
-=method $printer->underline_off()
+=method underline_off
 
 Switches off underline
 
@@ -584,7 +609,7 @@ sub underline_off {
   $self->_apply_printmode();
 }
 
-=method $printer->underline_on();
+=method underline_on
 
 Switches on underline
 
@@ -599,7 +624,7 @@ sub underline_on {
   $self->_apply_printmode();
 }
 
-=method $printer->inverse_off();
+=method inverse_off
 
 Switches off inverse text
 
@@ -612,7 +637,7 @@ sub inverse_off {
   $self->write(chr(0));
 }
 
-=method $printer->inverse_on();
+=method inverse_on
 
 Switches on inverse text
 
@@ -625,7 +650,7 @@ sub inverse_on {
   $self->write(chr(1));
 }
 
-=method $printer->barcode_height($height);
+=method barcode_height
 
 Sets barcode height
 
@@ -638,8 +663,9 @@ sub barcode_height {
   $self->write(chr($height));
 }
 
-=method $printer->print_barcode($type,$string)
+=method print_barcode
 
+$printer-E<gt>print_barcode($type,$string)
 Prints barcode
 
 =cut
@@ -653,8 +679,9 @@ sub print_barcode {
   $self->write($string);
 }
 
-=method $printer->print_text($msg,$chars_per_line);
+=method print_text
 
+$printer-E<gt>print_text($msg,$chars_per_line);
 Prints some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
 
 =cut
@@ -691,7 +718,7 @@ sub print_bitmap {
   $self->write(chr(50));
 }
 
-=method $printer->color_1()
+=method color_1
 
 Prints in first color for dual color printers
 
@@ -705,7 +732,7 @@ sub color_1{
   $self->write(chr(0));
 }
 
-=method $printer->color_2()
+=method color_2
 
 Prints in second color for dual color printers
 
@@ -719,7 +746,7 @@ sub color_2{
   $self->write(chr(1));
 }
 
-=method $printer->cutpaper()
+=method cutpaper
 
 Cuts the paper. Most Thermal receipt printers support the facility to cut the receipt using this command once printing is done.
 
@@ -734,7 +761,7 @@ sub cutpaper {
   $self->write(chr(255));
 }
 
-=method $printer->open_cash_drawer()
+=method open_cash_drawer
 
 Opens the Cash Drawer connected to the thermal printer.
 
@@ -749,7 +776,7 @@ sub open_cash_drawer {
   $self->write(chr(250));
 }
 
-=method $printer->test()
+=method test
 
 Prints a bunch of test strings to see if your printer is working fine/connected properly. Don't worry if some things like emphasized and double strike looks the same, it happened with my printer too.
 
@@ -1001,47 +1028,47 @@ __END__
   use Printer::Thermal;
 
   #For Network Printers $port is 9100 in most cases but might differ depending on how you have configured your printer
-  $printer = Printer::Thermal->new(device_ip=>$printer_ip,device_port=>$port);
+  $printer = Printer::Thermal-E<gt>new(device_ip=E<gt>$printer_ip,device_port=E<gt>$port);
 
-  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer->print_string variable.
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
+  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer-E<gt>print_string variable.
+  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
+  $printer-E<gt>bold_on();
+  $printer-E<gt>write("Bold Text");
+  $printer-E<gt>bold_off();
+  $printer-E<gt>print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
   
   #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/ttyACM0';
-  $printer = Printer::Thermal->new(serial_device_path=$path);
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print();
+  $printer = Printer::Thermal-E<gt>new(serial_device_path=$path);
+  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
+  $printer-E<gt>bold_on();
+  $printer-E<gt>write("Bold Text");
+  $printer-E<gt>bold_off();
+  $printer-E<gt>print();
 
   #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/usb/lp0';
-  $printer = Printer::Thermal->new(usb_device_path=$path);
-  $printer->write("Blah Blah \nReceipt Details\nFooter");
-  $printer->bold_on();
-  $printer->write("Bold Text");
-  $printer->bold_off();
-  $printer->print();
+  $printer = Printer::Thermal-E<gt>new(usb_device_path=$path);
+  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
+  $printer-E<gt>bold_on();
+  $printer-E<gt>write("Bold Text");
+  $printer-E<gt>bold_off();
+  $printer-E<gt>print();
 
 = DESCRIPTION
 
-Some might not find the module name accurate since ESC/P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose and I apologize for that!! 
+Some might not find the module name accurate since ESC-P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose and I apologize for that!! 
 
-For ESC/P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
+For ESC-P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
 
 = NOTES
 
 * If the printer prints out garbled characters instead of proper text, try specifying the baudrate parameter when creating printer object when you create the printer object(not for network or USB printers)
-    $printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
+    $printer = Printer::Thermal-E<gt>new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 = USAGE
 
-* This Module offers a object oriented interface to ESC/POS Printers. 
+* This Module offers a object oriented interface to ESC-POS Printers. 
 * Create a printer object by providing parameters for one of the three types of 
 printers supported.
 * then call formatting options or write() text to printer object in sequence. 
@@ -1049,12 +1076,6 @@ printers supported.
 to the printer. 
 
 Note: While you may call print() after every single command code, this is not advisable as some printers tend to choke up if you send them too many commands too quickly.
-
-= SEE ALSO
-
-* [Device::SerialPort]
-* [IO::File]
-* [IO::Socket]
 
 =end wikidoc
 

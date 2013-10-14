@@ -210,6 +210,8 @@ has font => (
 
 =attr underline
 
+Set/unset underline property
+
 =cut
 
 has underline => (
@@ -219,6 +221,8 @@ has underline => (
 );
 
 =attr emphasized
+
+Set/unset emphasized property
 
 =cut
 
@@ -230,6 +234,8 @@ has emphasized => (
 
 =attr double_height
 
+set unset double height property
+
 =cut
 
 has double_height => (
@@ -238,7 +244,9 @@ has double_height => (
   default => 0,
 );
 
-=double_width
+=attr double_width
+
+set unset double width property
 
 =cut
 

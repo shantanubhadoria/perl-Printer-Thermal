@@ -71,7 +71,7 @@ When used as a local serial device you can set the baudrate of the printer too. 
 
 This param may be specified when creating printer object to make sure it works properly.
 
-$printer = Printer::Thermal-E<gt>new(serial_device_path =E<gt> '/dev/ttyACM0', baudrate =E<gt> 9600);
+$printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 =cut
 
@@ -173,7 +173,7 @@ This is the direct device handle to the printer, You must almost never use this.
 Unless you are hacking through the module. If you are using this you must send me
 a bug report on why you had to use this.
 
-You can access it with $printer-E<gt>printer
+You can access it with $printer->printer
 
 =cut
 
@@ -184,9 +184,9 @@ has printer => (
 
 =attr print_string
 
-This contains the string in the module buffer that will be sent to the printer when you call $printer-E<gt>print();
+This contains the string in the module buffer that will be sent to the printer when you call $printer->print();
 
-my $print_string = $printer-E<gt>print_string
+my $print_string = $printer->print_string
 
 =cut
 
@@ -297,14 +297,14 @@ sub _build_printer {
 
 =method print
 
-$printer-E<gt>print()
+$printer->print()
 Sends the accumulated commands to the printer. All commands below need to be followed by a print() to send the data from buffer to the printer. You may call more than one printer command and then call print to send them all to printer together.
 The following bunch of commands print a text to a printer, move down one line, and cut the receipt paper.
 
-    $printer-E<gt>write("hello Printer\n");
-    $printer-E<gt>linefeed();
-    $printer-E<gt>cutpaper();
-    $printer-E<gt>print(); # Sends the all the commands before this to the printer in one go. 
+    $printer->write("hello Printer\n");
+    $printer->linefeed();
+    $printer->cutpaper();
+    $printer->print(); # Sends the all the commands before this to the printer in one go. 
 
 =cut
 
@@ -324,9 +324,9 @@ sub print {
 
 =method write
 
-$printer-E<gt>write("some text\n")
+$printer->write("some text\n")
 Writes a bunch of text that you pass here to the module buffer. 
-Note that this will not be passed to the printer till you call $printer-E<gt>print()
+Note that this will not be passed to the printer till you call $printer->print()
 
 =cut
 
@@ -337,7 +337,7 @@ sub write {
 
 =method left_margin
 
-$printer-E<gt>left_margin($nl,$nh)
+$printer->left_margin($nl,$nh)
 Sets the left margin code to the printer. takes two single byte parameters, $nl and $nh.
 To determine the value of these two bytes, use the INT and MOD conventions. INT indicates the integer (or whole number) part of a number, while MOD indicates the
 remainder of a division operation.
@@ -544,7 +544,7 @@ sub font_size {
 
 Set ESC specified font size
 
-    $printer-E<gt>font_size_esc($size);
+    $printer->font_size_esc($size);
 
 =cut
 
@@ -673,7 +673,7 @@ sub barcode_height {
 
 =method print_barcode
 
-$printer-E<gt>print_barcode($type,$string)
+$printer->print_barcode($type,$string)
 Prints barcode
 
 =cut
@@ -689,7 +689,7 @@ sub print_barcode {
 
 =method print_text
 
-$printer-E<gt>print_text($msg,$chars_per_line);
+$printer->print_text($msg,$chars_per_line);
 Prints some text defined by msg. If chars_per_line is defined, inserts newlines after the given amount. Use normal '\n' line breaks for empty lines.
 
 =cut
@@ -1036,32 +1036,32 @@ __END__
   use Printer::Thermal;
 
   #For Network Printers $port is 9100 in most cases but might differ depending on how you have configured your printer
-  $printer = Printer::Thermal-E<gt>new(device_ip=E<gt>$printer_ip,device_port=E<gt>$port);
+  $printer = Printer::Thermal->new(device_ip=>$printer_ip,device_port=>$port);
 
-  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer-E<gt>print_string variable.
-  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
-  $printer-E<gt>bold_on();
-  $printer-E<gt>write("Bold Text");
-  $printer-E<gt>bold_off();
-  $printer-E<gt>print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
+  #These commands won't actually send anything to the printer but it will store all the merged data including control codes to send to printer in $printer->print_string variable.
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print(); ##Sends the above set of code to the printer. Clears the buffer text in module.
   
   #For local printer connected on serial port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/ttyACM0';
-  $printer = Printer::Thermal-E<gt>new(serial_device_path=$path);
-  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
-  $printer-E<gt>bold_on();
-  $printer-E<gt>write("Bold Text");
-  $printer-E<gt>bold_off();
-  $printer-E<gt>print();
+  $printer = Printer::Thermal->new(serial_device_path=$path);
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print();
 
   #For local printer connected on usb port, check syslog(Usually under /var/log/syslog) for what device file was created for your printer when you connect it to your system(For plug and play printers).
   my $path = '/dev/usb/lp0';
-  $printer = Printer::Thermal-E<gt>new(usb_device_path=$path);
-  $printer-E<gt>write("Blah Blah \nReceipt Details\nFooter");
-  $printer-E<gt>bold_on();
-  $printer-E<gt>write("Bold Text");
-  $printer-E<gt>bold_off();
-  $printer-E<gt>print();
+  $printer = Printer::Thermal->new(usb_device_path=$path);
+  $printer->write("Blah Blah \nReceipt Details\nFooter");
+  $printer->bold_on();
+  $printer->write("Bold Text");
+  $printer->bold_off();
+  $printer->print();
 
 = DESCRIPTION
 
@@ -1072,7 +1072,7 @@ For ESC-P codes refer the guide from Epson http://support.epson.ru/upload/librar
 = NOTES
 
 * If the printer prints out garbled characters instead of proper text, try specifying the baudrate parameter when creating printer object when you create the printer object(not for network or USB printers)
-    $printer = Printer::Thermal-E<gt>new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
+    $printer = Printer::Thermal->new(serial_device_path => '/dev/ttyACM0', baudrate => 9600);
 
 = USAGE
 

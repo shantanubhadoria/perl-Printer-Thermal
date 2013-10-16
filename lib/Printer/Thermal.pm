@@ -4,7 +4,7 @@ use warnings;
 package Printer::Thermal;
 
 # PODNAME: Printer::Thermal
-# ABSTRACT: Interface for Thermal (and some dot-matrix and inkjet) Printers that support ESC-POS specification.  
+# ABSTRACT: Interface for Thermal and some dot-matrix and inkjet Printers that support ESC-POS specification.  
 # COPYRIGHT
 # VERSION
 

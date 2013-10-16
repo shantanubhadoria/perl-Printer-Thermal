@@ -19,8 +19,6 @@ use IO::Socket;
 use Time::HiRes qw(usleep);
 
 
-=encoding utf-8
-
 =attr usb_device_path
 
 This variable contains the path for the printer device file when connected as a usb device on UNIX-like systems. I haven't added support for Windows and it probably wont work in doz as a local printer without some modifications. Feel free to try it out and let me know what happens. This must be passed in the constructor
@@ -526,8 +524,8 @@ sub emphasize_on {
 =method font_size
 
 Defined Region
-0 ≤ n ≤ 255
-However, 1 ≤ vertical direction magnification ratio ≤ 8, 1 ≤ horizontal direction magnification ratio ≤ 8
+0 <= n <= 255
+However, 1 <= vertical direction magnification ratio <= 8, 1 <= horizontal direction magnification ratio <= 8
 Initial Value n=0
 Function Specifies the character size (magnification ratio in the vertical and horizontal directions).
 

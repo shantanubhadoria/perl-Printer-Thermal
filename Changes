@@ -1,6 +1,37 @@
 Changelog for Printer-Thermal
 
-0.19 2013-09-15T05:34:04
+0.26 2013-10-16T05:41:53
+ - minor edits [Shantanu]
+
+0.25 2013-10-16T04:51:44
+ - v0.25 [Shantanu Bhadoria]
+
+0.24 2013-10-16T04:27:09
+ - v0.24 [Shantanu Bhadoria]
+
+0.23 2013-10-16T04:23:10
+ - v0.23 [Shantanu Bhadoria]
+ - Fixed pod nested encoding error [Shantanu Bhadoria]
+
+0.22 2013-10-14T06:59:45
+ - v0.22 [Shantanu Bhadoria]
+ - Testing wierdness in POD checker behaviour wrt podlint when testing >
+   and < signs podlint expects them to be escaped but perldoc doesnt like
+   it [Shantanu Bhadoria]
+
+0.21 2013-10-14T06:16:42
+ - v0.21 [Shantanu Bhadoria]
+ - Fixed More POD Errors [Shantanu Bhadoria]
+
+0.20 2013-09-30T07:58:17
+ - v0.20 [Shantanu Bhadoria]
+ - Attempting to fix Pod [Shantanu Bhadoria]
+ - Adding mailmap to avoid explosions in contributors [Shantanu Bhadoria]
+
+0.19 2013-09-15T05:34:37
+ - v0.19
+   
+    - Fixed POD Errors [Shantanu] [Shantanu]
  - Fixed POD Errors [Shantanu]
 
 0.18 2013-09-14T04:29:29

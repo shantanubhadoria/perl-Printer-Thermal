@@ -311,11 +311,11 @@ sub print {
   my $printer = $self->printer;
   my @chunks;
   my $string = $self->print_string;
-  my $n = 300; # Size of each chunk in bytes
+  my $n = 100; # Size of each chunk in bytes
   @chunks = unpack "a$n" x ((length($string)/$n)-1) . "a*", $string;;    
   for my $chunk( @chunks ){
       $printer->write( $chunk );
-      usleep(1000);
+      usleep(2000);
   }
   $self->print_string("");
 }

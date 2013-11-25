@@ -1,6 +1,13 @@
 Changelog for Printer-Thermal
 
-0.26 2013-10-16T05:41:53
+0.27 2013-11-25T03:16:35
+ - Reduced Printer buffer size to accomadate printers with smaller buffers.
+   [Shantanu]
+
+0.26 2013-10-16T05:43:30
+ - v0.26
+   
+    - minor edits [Shantanu] [Shantanu]
  - minor edits [Shantanu]
 
 0.25 2013-10-16T04:51:44

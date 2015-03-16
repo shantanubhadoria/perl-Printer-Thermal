@@ -4,7 +4,7 @@ use warnings;
 package Printer::Thermal;
 
 # PODNAME: Printer::Thermal
-# ABSTRACT: Interface for Thermal and some dot-matrix and inkjet Printers that support ESC-POS specification.  
+# ABSTRACT: Interface for Thermal and some dot-matrix and inkjet Printers that support ESC-POS specification (Deprecated) - Use Printer::ESCPOS instead
 # COPYRIGHT
 # VERSION
 
@@ -1063,7 +1063,7 @@ __END__
 
 = DESCRIPTION
 
-Some might not find the module name accurate since ESC-P was developed initially for dot matrix and inkjet printers, however today most Thermal Receipt Printers use these codes for control. Most people(i.e. like me when I started looking for Thermal Printer stuff) who look for Thermal Printer codes don't know Thermal Printers use certain set of ESC codes to achieve a bunch of functions, and I didn't want to name it Printer::ESC::P because that would not help people who are new to receipt printers looking for something like this module. This module provides an Object oriented interface for interacting with Thermal Printers. Maybe I will refactor it later with subclasses. I used Moose and I apologize for that!! 
+This Module is deprecated in favour of [Printer::ESCPOS], which is the shiny new successor to this module. [Printer::Thermal] will continue to work and might receive occasional support and bug fixes but no new features. Read the See Also section for reasons on why I deprecated [Printer::Thermal] in favour of a new namespace instead of upgrading the existing module. For those who are already using [Printer::Thermal], have simple needs and are happy with what this module provides, they can avoid the switch to [Printer::ESCPOS] as that module does not have a interface compatible with [Printer::Thermal] and might involve some work switching over. If you are starting a new project or if you want the support for brand new features like printing logos etc., then you must use [Printer::ESCPOS].
 
 For ESC-P codes refer the guide from Epson http://support.epson.ru/upload/library_file/14/esc-p.pdf
 
@@ -1082,6 +1082,15 @@ printers supported.
 to the printer. 
 
 Note: While you may call print() after every single command code, this is not advisable as some printers tend to choke up if you send them too many commands too quickly.
+
+= SEE ALSO
+
+[Printer::ESCPOS] is the new module that will take over the Perl support for ESC-POS receipt printers. Why did I choose to deprecate [Printer::Thermal] for [Printer::ESCPOS] instead of upgrading it? Read on if you are curious
+
+* When I started writing [Printer::Thermal] I was working with Thermal printers for my own requirements and wanted to write something that would work with all Thermal Printers. As I discovered after a couple of releases of [Printer::Thermal], the ESC-POS specification is a broad command specification for POS printers and it has nothing to do with the print technology itself thermal or others, so the name of the module was a big misnomer and it led to lot of confusion as to question of what the module was actually for.
+* [Printer::Thermal] module was only intended for supporting thermal printers but it worked quiet well with other printer types. The way receipt printers work there was no reason to have a module specifically for thermal printers. So this Printer::Thermal name started to make me uneasy.
+* There are those have minimal printing needs from their POS printers, they are already using [Printer::Thermal] and are happy with it. There is no reason for them to switch over unless they start a new project. For newer users it makes sense to start with a module that will have future supports and adds a wider range of flexible functions for ESC-POS Printers.
+* Last but not the least important reason, I wanted to make two things user-expandable: Printer connection(USB, Serial, Network etc.) and Printer Model Profiles(As I discovered that while most printer had more or less common command codes, They all had their own feature sets which borrowed most commands from a subset of ESCPOS. So I wanted users to be able to create their own profiles of supported commands to allow community effort for expansion of module functionality. Adding these two to existing module would have broken backward compatibility. [Printer::ESCPOS] will have better interfaces for users to add their own connection types and printer profiles.
 
 =end wikidoc
 

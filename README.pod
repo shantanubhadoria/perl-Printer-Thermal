@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-Printer::Thermal - Interface for Thermal and some dot-matrix and inkjet Printers that support ESC-POS specification (Deprecated) - Use Printer::ESCPOS instead
+Printer::Thermal - Interface for Thermal and some dot-matrix and inkjet Printers that support ESC-POS specification (Deprecated) - Use L<Printer::ESCPOS> instead
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 SYNOPSIS
 

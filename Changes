@@ -1,6 +1,10 @@
 Changelog for Printer-Thermal
 
-0.28 2015-03-16T04:10:51
+0.29 2015-03-27T04:57:51
+ - Link to the successor module in description (Shantanu Bhadoria)
+
+0.28 2015-03-16T04:11:30
+ - v0.28 (Shantanu Bhadoria)
  - Deprecating in favour of Printer::ESCPOS (Shantanu Bhadoria)
 
 0.27 2013-11-25T03:47:19
